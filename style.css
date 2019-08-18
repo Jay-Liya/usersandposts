@@ -1,0 +1,35 @@
+/* css styles for index.html */
+h3 { 
+	margin:25px 0 10px 65px; 
+}
+
+h4 { 
+	margin:30px 0 10px 0; 
+}
+
+#userslist { 
+	width:200px; 
+	margin-left:10px; 
+}
+
+ul li, #postslist div span {
+	cursor:pointer;
+}
+
+#postslist {
+	width:100%;
+}
+
+#postslist div{
+	background-color:#ccc;
+	margin-top:5px; 
+	padding:5px;
+	border-radius:2px;
+}
+
+#posts {
+  position: absolute;
+  top: 0px;
+  left: 220px;
+  right:10px;
+}
