@@ -1,0 +1,138 @@
+<html>
+	<head>
+
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	    <!-- CoreUI CSS -->
+	    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@coreui/coreui/dist/css/coreui.min.css">
+	    <link rel="stylesheet" type="text/css" href="style.css">
+
+		<title>Users and Posts</title>
+
+	</head>
+	<body>
+		<!-- Container to display users and posts lists -->
+		<div id="app">
+
+			<h3 align="left" >Users</h3>
+
+			<section v-if="errored">
+				<p>Sorry, not able to retrieve this information at the moment, please try back later</p>
+			</section>
+
+			<section v-else>
+
+				<div v-if="loading">Loading...</div>
+
+				<div
+				  v-else
+				  v-for="user in info"
+				  class="user"	  
+				  align="left"    
+				>	      
+				  	<ul class="list-group" id="userslist">
+				  		<li class="list-group-item" 
+				  			v-on:click="viewPosts(user.id)"
+				  			v-bind:style="user.id==userID? 'background-color:#ccc;' : 'background-color:#fff;' "
+				  		 >
+				  		{{ user.name }}</li>
+				  	</ul>
+
+				</div>
+
+		  	</section>
+
+		 	<!-- Container to display posts list -->
+			<div id="posts" v-if="showPosts" >	
+
+				<h4 align="center">Posts</h4>  
+
+				<section v-if="errored">
+					<p>Sorry, not able to retrieve this information at the moment, please try back later</p>
+				</section>
+
+				<section v-else>
+					<div v-if="loading">Loading...</div>
+
+					<div
+					  v-else
+					  v-for="post in postinfo"
+					  id="postslist"
+					>
+						<div v-on:click="viewtDetails(post.id)"
+							 v-bind:style="post.userId==userID? 'display: block;' : 'display: none;' " >
+							<span>{{ post.title }}</span>
+							<div v-bind:style="post.id==postID? 'display: block;' : 'display: none;' ">
+								<i>{{ post.body }}</i>
+							</div>
+						</div>	      
+				  
+			    	</div>
+
+			  	</section>
+
+		 	</div>
+
+		</div>
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script>
+			new Vue({
+			  el: '#app',
+			  data () {
+			    return {
+			      info: null,
+			      loading: true,
+			      errored: false,
+			      postinfo: null,
+			      showPosts: false,
+			      userID:0,
+			      postID:0
+			    }
+			  },		  
+			  mounted() {
+			     this.loadData();
+			   },
+			   methods: {
+			     async loadData() {
+			       this.loading = true
+			       try {
+			         await Promise.all([this.getUsers(), this.getPosts()])
+			       } catch (error) {
+			         this.errormsg = error.message
+			       } finally {
+			         this.loading = false
+			       }
+			     },
+			     /* Retrieve all users */
+			     getUsers() {	
+			       return axios
+			         .get('https://jsonplaceholder.typicode.com/users')
+			         .then(response => {
+				        this.info = response.data
+				      })
+			     },
+			      /* Retrieve all posts */
+			     getPosts() {
+			       return axios
+			         .get('https://jsonplaceholder.typicode.com/posts')
+			         .then(response => {
+				        this.postinfo = response.data
+				      })
+			     },	
+			     /* Make visible posts*/	     
+		     	 viewPosts(id) {	     	 	
+		     	 	this.userID=id
+		     	 	this.showPosts = true
+		         },
+		         /* Make visible post details*/	
+		         viewtDetails(id) {
+			     	this.postID=id
+		         }
+			    }		    
+			  })
+		</script>
+	</body>
+</html>
